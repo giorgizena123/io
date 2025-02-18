@@ -1,15 +1,30 @@
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+import java.io.*;
+import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
-        //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-        // to see how IntelliJ IDEA suggests fixing it.
-        System.out.printf("Hello and welcome!");
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter first person's first name, last name, and age: ");
+        String firstName1 = scanner.next();
+        String lastName1 = scanner.next();
+        int age1 = scanner.nextInt();
+        Human person1 = new Human(firstName1, lastName1, age1);
 
-        for (int i = 1; i <= 5; i++) {
-            //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-            // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-            System.out.println("i = " + i);
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("human.dat"))) {
+            oos.writeObject(person1);
+            System.out.println("Human object saved to file.");
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("human.dat"))) {
+            Human savedPerson = (Human) ois.readObject();
+            System.out.println("Human object read from file: " + savedPerson.getFirstName() + " " + savedPerson.getLastName());
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        person1.walk();
+
+        scanner.close();
     }
 }
